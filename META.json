@@ -1,0 +1,54 @@
+{
+   "abstract" : "take structured address data and format it according to the various global/country rules",
+   "author" : [
+      "mtmail <mtmail-cpan@gmx.net>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 5.019, CPAN::Meta::Converter version 2.141520",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Geo-Address-Formatter",
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.30"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Clone" : "0",
+            "Data::Dumper" : "0",
+            "File::Find::Rule" : "0",
+            "List::Util" : "0",
+            "Mustache::Simple" : "0",
+            "Test::Exception" : "0",
+            "Test::LWP::Recorder" : "0",
+            "Test::More" : "0.88",
+            "Try::Tiny" : "0",
+            "YAML" : "0",
+            "perl" : "5.010"
+         }
+      }
+   },
+   "provides" : {
+      "Geo::Address::Formatter" : {
+         "file" : "lib/Geo/Address/Formatter.pm",
+         "version" : "v1.0.0"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/lokku/perl-Geo-Address-Formatter.git",
+         "web" : "https://github.com/lokku/perl-Geo-Address-Formatter"
+      }
+   },
+   "version" : "1.0.0"
+}
+
