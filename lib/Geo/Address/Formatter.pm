@@ -1,7 +1,7 @@
 # ABSTRACT: take structured address data and format it according to the various global/country rules
 
 package Geo::Address::Formatter;
-$Geo::Address::Formatter::VERSION = '1.0.0';
+$Geo::Address::Formatter::VERSION = '1.1.0';
 use strict;
 use warnings;
 
@@ -22,8 +22,7 @@ sub new {
   my ($class, %params) = @_;
 
   my $self = {};
-  # my $path = dirname(__FILE__) . '/../../../../ address-formatting';
-  my $conf_path = $params{conf_path} || dirname(__FILE__) . '/../../../t/test_setup';
+  my $conf_path = $params{conf_path} || die "no conf_path set";
   bless( $self, $class );
 
   $self->_read_configuration($conf_path);
@@ -35,7 +34,7 @@ sub _read_configuration {
   my $self = shift;
   my $path = shift;
 
-  my @a_filenames = File::Find::Rule->file()->name( '*.yaml' )->in($path.'/conf/countries');
+  my @a_filenames = File::Find::Rule->file()->name( '*.yaml' )->in($path.'/countries');
 
   foreach my $filename ( @a_filenames ){
     try {
@@ -48,7 +47,7 @@ sub _read_configuration {
   # warn Dumper \@files;
 
   try {
-    my @c = LoadFile($path . '/conf/components.yaml');
+    my @c = LoadFile($path . '/components.yaml');
     # warn Dumper \@c;
     $self->{ordered_components} = [ map { $_->{name} => ($_->{aliases} ? @{$_->{aliases}} : ()) } @c ];
   }
@@ -57,9 +56,9 @@ sub _read_configuration {
   };
 
   $self->{state_codes} = {};
-  if ( -e $path . '/conf/state_codes.yaml'){
+  if ( -e $path . '/state_codes.yaml'){
     try {
-      my $rh_c = LoadFile($path . '/conf/state_codes.yaml');
+      my $rh_c = LoadFile($path . '/state_codes.yaml');
       # warn Dumper $rh_c;
       $self->{state_codes} = $rh_c;
     }
@@ -258,7 +257,7 @@ Geo::Address::Formatter - take structured address data and format it according t
 
 =head1 VERSION
 
-version 1.0.0
+version 1.1.0
 
 =head1 SYNOPSIS
 
@@ -298,8 +297,7 @@ https://github.com/lokku/address-formatting. It includes test cases.
 
   my $GAF = Geo::Address::Formatter->new( conf_path => '/some/path' );
 
-Returns one instance. The default conf_path is that of the test suite
-and isn't suitable for "real" addresses.
+Returns one instance. The conf_path is required.
 
 =head2 format_address
 

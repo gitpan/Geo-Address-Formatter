@@ -31,9 +31,9 @@ my %WriteMakefileArgs = (
     "Try::Tiny" => 0,
     "YAML" => 0
   },
-  "VERSION" => "1.0.0",
+  "VERSION" => "1.1.0",
   "test" => {
-    "TESTS" => "t/*.t t/unit/*.t"
+    "TESTS" => "t/blackbox/*.t t/unit/*.t"
   }
 );
 
