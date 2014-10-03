@@ -1,10 +1,10 @@
 {
    "abstract" : "take structured address data and format it according to the various global/country rules",
    "author" : [
-      "mtmail <mtmail-cpan@gmx.net>"
+      "edf <edf@sloan.mit.edu>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 5.019, CPAN::Meta::Converter version 2.141520",
+   "generated_by" : "Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.141520",
    "license" : [
       "perl_5"
    ],
@@ -16,7 +16,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "ExtUtils::MakeMaker" : "6.30"
+            "ExtUtils::MakeMaker" : "0"
          }
       },
       "runtime" : {
@@ -38,7 +38,7 @@
    "provides" : {
       "Geo::Address::Formatter" : {
          "file" : "lib/Geo/Address/Formatter.pm",
-         "version" : "v1.1.0"
+         "version" : "v1.2.0"
       }
    },
    "release_status" : "stable",
@@ -49,6 +49,6 @@
          "web" : "https://github.com/lokku/perl-Geo-Address-Formatter"
       }
    },
-   "version" : "1.1.0"
+   "version" : "1.2.0"
 }
 
