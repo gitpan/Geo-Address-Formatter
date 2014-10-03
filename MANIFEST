@@ -12,6 +12,8 @@ address-formatting/conf/components.yaml
 address-formatting/conf/countries/worldwide.yaml
 address-formatting/conf/country_codes.yaml
 address-formatting/conf/state_codes.yaml
+address-formatting/testcases/countries/at.yaml
+address-formatting/testcases/countries/au.yaml
 address-formatting/testcases/countries/br.yaml
 address-formatting/testcases/countries/de.yaml
 address-formatting/testcases/countries/fr.yaml

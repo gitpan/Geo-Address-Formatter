@@ -1,3 +1,6 @@
+#
+# generic mappings, specific territories get mapped to these
+#
 generic1: &generic1 |
         {{attention}}
         {{house}}
@@ -30,9 +33,29 @@ generic4: &generic4 |
         {{postcode}} {{#first}} {{city}} || {{town}} || {{village}} || {{state}} {{/first}}
         {{country}}
 
+generic5: &generic5 |
+        {{attention}}
+        {{house}}
+        {{building}}
+        {{house_number}} {{road}}
+        {{#first}} {{city}} || {{town}} || {{state_district}} || {{village}} {{/first}} {{#first}} {{state_code}} || {{state}} {{/first}} {{postcode}}
+        {{country}}
+
 default:
     address_template: *generic2
 
+#
+# country / territory specific mappings
+# please keep in alpha order by country code
+#
+
+# Austria
+AT: 
+    address_template: *generic1
+
+# Australia
+AU: 
+    address_template: *generic5
 
 # Brazil
 BR:
@@ -140,11 +163,6 @@ TR:
 
 # USA
 US: 
-    address_template: |
-        {{attention}}
-        {{house}}
-        {{building}}
-        {{house_number}} {{road}}
-        {{#first}} {{city}} || {{town}} || {{state_district}} || {{village}} {{/first}}, {{#first}} {{state_code}} || {{state}} {{/first}} {{postcode}}
-        {{country}}
+    address_template: *generic5
+
 
