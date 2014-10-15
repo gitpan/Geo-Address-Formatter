@@ -1,7 +1,7 @@
 {
    "abstract" : "take structured address data and format it according to the various global/country rules",
    "author" : [
-      "edf <edf@sloan.mit.edu>"
+      "edf <edf@opencagedata.com>"
    ],
    "dynamic_config" : 0,
    "generated_by" : "Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.141520",
@@ -38,7 +38,7 @@
    "provides" : {
       "Geo::Address::Formatter" : {
          "file" : "lib/Geo/Address/Formatter.pm",
-         "version" : "v1.2.1"
+         "version" : "v1.2.2"
       }
    },
    "release_status" : "stable",
@@ -49,6 +49,6 @@
          "web" : "https://github.com/lokku/perl-Geo-Address-Formatter"
       }
    },
-   "version" : "1.2.1"
+   "version" : "1.2.2"
 }
 

@@ -1,7 +1,7 @@
 ---
 abstract: 'take structured address data and format it according to the various global/country rules'
 author:
-  - 'edf <edf@sloan.mit.edu>'
+  - 'edf <edf@opencagedata.com>'
 build_requires: {}
 configure_requires:
   ExtUtils::MakeMaker: '0'
@@ -15,7 +15,7 @@ name: Geo-Address-Formatter
 provides:
   Geo::Address::Formatter:
     file: lib/Geo/Address/Formatter.pm
-    version: v1.2.1
+    version: v1.2.2
 requires:
   Clone: '0'
   Data::Dumper: '0'
@@ -30,4 +30,4 @@ requires:
   perl: '5.010'
 resources:
   repository: https://github.com/lokku/perl-Geo-Address-Formatter.git
-version: 1.2.1
+version: 1.2.2

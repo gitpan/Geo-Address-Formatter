@@ -11,7 +11,7 @@ use ExtUtils::MakeMaker ;
 
 my %WriteMakefileArgs = (
   "ABSTRACT" => "take structured address data and format it according to the various global/country rules",
-  "AUTHOR" => "edf <edf\@sloan.mit.edu>",
+  "AUTHOR" => "edf <edf\@opencagedata.com>",
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0
   },
@@ -31,7 +31,7 @@ my %WriteMakefileArgs = (
     "Try::Tiny" => 0,
     "YAML" => 0
   },
-  "VERSION" => "1.2.1",
+  "VERSION" => "1.2.2",
   "test" => {
     "TESTS" => "t/blackbox/*.t t/unit/*.t"
   }
