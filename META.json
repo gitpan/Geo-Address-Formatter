@@ -4,7 +4,7 @@
       "edf <edf@opencagedata.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.141520",
+   "generated_by" : "Dist::Zilla version 5.019, CPAN::Meta::Converter version 2.141520",
    "license" : [
       "perl_5"
    ],
@@ -16,7 +16,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "ExtUtils::MakeMaker" : "0"
+            "ExtUtils::MakeMaker" : "6.30"
          }
       },
       "runtime" : {
@@ -38,7 +38,7 @@
    "provides" : {
       "Geo::Address::Formatter" : {
          "file" : "lib/Geo/Address/Formatter.pm",
-         "version" : "v1.2.2"
+         "version" : "v1.2.3"
       }
    },
    "release_status" : "stable",
@@ -49,6 +49,6 @@
          "web" : "https://github.com/lokku/perl-Geo-Address-Formatter"
       }
    },
-   "version" : "1.2.2"
+   "version" : "1.2.3"
 }
 
