@@ -1,17 +1,17 @@
 # ABSTRACT: take structured address data and format it according to the various global/country rules
 
 package Geo::Address::Formatter;
-$Geo::Address::Formatter::VERSION = '1.2.3';
+$Geo::Address::Formatter::VERSION = '1.2.4';
 use strict;
 use warnings;
 
-use Mustache::Simple;
-use Try::Tiny;
 use Clone qw(clone);
+use Data::Dumper;
 use File::Basename qw(dirname);
 use File::Find::Rule;
 use List::Util qw(first);
-use Data::Dumper;
+use Mustache::Simple;
+use Try::Tiny;
 use YAML qw(Load LoadFile);
 
 my $tache = Mustache::Simple->new;
@@ -36,6 +36,8 @@ sub _read_configuration {
         File::Find::Rule->file()->name( '*.yaml' )->in($path.'/countries');
 
     $self->{templates} = {};
+    $self->{component_aliases} = {};
+
     foreach my $filename ( sort @a_filenames ){
         try {
             my $rh_templates = LoadFile($filename);
@@ -54,7 +56,16 @@ sub _read_configuration {
 
     try {
         my @c = LoadFile($path . '/components.yaml');
-        # warn Dumper \@c;
+
+        foreach my $rh_c (@c){
+            if (defined($rh_c->{aliases})){
+                foreach my $alias (@{$rh_c->{aliases}}){
+                    $self->{component_aliases}{$alias} = $rh_c->{name};
+                }
+            }
+        }
+        #warn Dumper $self->{component_aliases};
+        #warn Dumper \@c;
         $self->{ordered_components} = 
             [ map { $_->{name} => ($_->{aliases} ? @{$_->{aliases}} : ()) } @c];
     }
@@ -86,6 +97,15 @@ sub format_address {
             || $self->_determine_country_code($rh_components) 
             || '';
 
+    # set the aliases
+    foreach my $alias (keys %{$self->{component_aliases}}){
+        if (defined($rh_components->{$alias})){     
+            $rh_components->{$self->{component_aliases}->{$alias}} = 
+                $rh_components->{$alias};
+        }
+    }
+
+    # determine the template
     my $rh_config = $self->{templates}{uc($cc)} || $self->{templates}{default};
     my $template_text = $rh_config->{address_template};
 
@@ -93,10 +113,7 @@ sub format_address {
     #print STDERR "comp " . Dumper $rh_components;
 
     # do we have the minimal components for an address?
-    # or should we instead fall back?
-    $self->_apply_replacements($rh_components, $rh_config->{replace});
-    $self->_add_state_code($rh_components);
-
+    # or should we instead use the fallback template?
     if (!$self->_minimal_components($rh_components)){
         $template_text = 
             $rh_config->{fallback_template}
@@ -104,17 +121,41 @@ sub format_address {
             || $rh_config->{address_template};  # if there is no fallback
     }
 
-    $rh_components->{attention} = join(', ', map { $rh_components->{$_} } @{ $self->_find_unknown_components($rh_components)} );
+    # clean up the components
+    $self->_apply_replacements($rh_components, $rh_config->{replace});
+    $self->_add_state_code($rh_components);
 
+    # add the attention
+    $rh_components->{attention} = join(', ', map { $rh_components->{$_} } @{ $self->_find_unknown_components($rh_components)} );
+    #warn Dumper $rh_components;
+    # render it
     my $text = $self->_render_template($template_text, $rh_components);
+    $text = $self->_postformat($text,$rh_config->{postformat_replace});
     $text = $self->_clean($text);
+    return $text;
+}
+
+sub _postformat {
+    my $self        = shift;
+    my $text  = shift;
+    my $raa_rules   = shift;
+
+    foreach my $ra_fromto ( @$raa_rules ){
+        try {
+            my $regexp = qr/$ra_fromto->[0]/;
+            $text =~ s/$regexp/$ra_fromto->[1]/;
+        }
+        catch {
+            warn "invalid replacement: " . join(', ', @$ra_fromto)
+        };
+    }
     return $text;
 }
 
 sub _minimal_components {
     my $self = shift;
     my $rh_components = shift || return;
-    my @required_components = qw(road postcode);
+    my @required_components = qw(road postcode); #FIXME - should be in conf
     my $missing = 0;  # number of required components missing
   
     my $minimal_threshold = 2;
@@ -190,6 +231,8 @@ sub _clean {
     $out =~ s/\s+,\s+/, /g; # one space behind comma
 
     $out =~ s/\s\s+/ /g; # multiple whitespace to one
+    $out =~ s/,,+/,/g; # multiple commas to one
+
     $out =~ s/^\s+//;
     $out =~ s/\s+$//;
     return $out;
@@ -209,7 +252,6 @@ sub _render_template {
         my $selected = first { length($_) } split(/\s*\|\|\s*/, $text);
         return $selected;
     };
-
     $template_content =~ s/\n/, /sg;
     my $output = $tache->render($template_content, $context);
     
@@ -226,36 +268,8 @@ sub _find_unknown_components {
     my %h_known = map { $_ => 1 } @{ $self->{ordered_components} };
     my @a_unknown = grep { !exists($h_known{$_}) } keys %$components;
 
+    #warn Dumper \@a_unknown;
     return \@a_unknown;
-}
-
-sub _default_algo {
-    my $self = shift;
-    my $cs = shift || return;
-
-    my @values = ();
-
-    # upper case country code
-    if ( my $ccode = $cs->{country_code} ){
-        $cs->{country_code} = uc($ccode);
-    }
-
-    # now do the location pieces
-    foreach my $k (@{ $self->{ordered_components} }){
-        next unless ( exists($cs->{$k}) );
-        next if ( $k eq 'country_code' && $cs->{'country'} );
-
-        push(@values, $cs->{$k});
-    }
-
-    # get the ones we missed previously
-    # FIXME - this is bad, we're just shoving stuff to the start
-    foreach my $k ( @{ $self->_find_unknown_components($cs) } ) {
-        warn "not sure where to put this: $k";
-        ## add to the front
-        unshift(@values, $cs->{$k});
-    }
-    return join(', ', @values);
 }
 
 1;
@@ -272,7 +286,7 @@ Geo::Address::Formatter - take structured address data and format it according t
 
 =head1 VERSION
 
-version 1.2.3
+version 1.2.4
 
 =head1 SYNOPSIS
 

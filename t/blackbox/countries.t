@@ -36,19 +36,17 @@ if ( -d $path ){
   use_ok($CLASS);
   my $GAF = $CLASS->new( conf_path => $path2 );
 
-
-
   sub _one_testcase {
     my $country    = shift;
+    #next if ($country ne 'de');
     my $rh_testcase = shift;
+    #next if ($rh_testcase->{expected} !~ m/Köln/);
     is(
       $GAF->format_address($rh_testcase->{components}),
       $rh_testcase->{expected},
       $country . ' - ' . $rh_testcase->{description}
     );
   }
-
-
 
   foreach my $filename (@files){
     my $country = basename($filename);
@@ -59,6 +57,18 @@ if ( -d $path ){
       @a_testcases = LoadFile($filename);
     } "parsing file $filename";
 
+    {
+      my $text = read_file($filename);
+
+      ## example "Stauffenstra\u00dfe" which should be "Stauffenstraße"
+      if ( $text =~ /\\u00/ ){
+        unlike(
+          $text,
+          qr!\\u00!,
+          'please don\'t use Javascript utf8 encoding, use characters directly'
+        );
+      }
+    }
     foreach my $rh_testcase (@a_testcases){
       _one_testcase($country, $rh_testcase);
     }
