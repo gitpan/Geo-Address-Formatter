@@ -1,7 +1,7 @@
 # ABSTRACT: take structured address data and format it according to the various global/country rules
 
 package Geo::Address::Formatter;
-$Geo::Address::Formatter::VERSION = '1.2.4';
+$Geo::Address::Formatter::VERSION = '1.2.5';
 use strict;
 use warnings;
 
@@ -286,7 +286,7 @@ Geo::Address::Formatter - take structured address data and format it according t
 
 =head1 VERSION
 
-version 1.2.4
+version 1.2.5
 
 =head1 SYNOPSIS
 
