@@ -1,7 +1,7 @@
 # ABSTRACT: take structured address data and format it according to the various global/country rules
 
 package Geo::Address::Formatter;
-$Geo::Address::Formatter::VERSION = '1.2.5';
+$Geo::Address::Formatter::VERSION = '1.2.6';
 use strict;
 use warnings;
 
@@ -125,8 +125,12 @@ sub format_address {
     $self->_apply_replacements($rh_components, $rh_config->{replace});
     $self->_add_state_code($rh_components);
 
-    # add the attention
-    $rh_components->{attention} = join(', ', map { $rh_components->{$_} } @{ $self->_find_unknown_components($rh_components)} );
+    # add the attention, but only if needed
+    my $ra_unknown = $self->_find_unknown_components($rh_components);
+    if (scalar(@$ra_unknown)){
+        $rh_components->{attention} = join(', ', map { $rh_components->{$_} } @$ra_unknown);
+    }
+
     #warn Dumper $rh_components;
     # render it
     my $text = $self->_render_template($template_text, $rh_components);
@@ -254,14 +258,23 @@ sub _render_template {
     };
     $template_content =~ s/\n/, /sg;
     my $output = $tache->render($template_content, $context);
-    
     $output = $self->_clean($output);
+
+    # is it empty?
+    if ($output !~ m/\w/){
+        my $num_components = scalar(keys %$components);
+        if ($num_components == 1){  
+            foreach my $k (keys %$components){
+                $output = $components->{$k};
+            }
+        } # FIXME what if more than one?
+    }
     return $output;
 }
 
 # note: unsorted list because $cs is a hash!
 # returns []
-sub _find_unknown_components {
+sub _find_unknown_components { 
     my $self       = shift;
     my $components = shift;
 
@@ -286,7 +299,7 @@ Geo::Address::Formatter - take structured address data and format it according t
 
 =head1 VERSION
 
-version 1.2.5
+version 1.2.6
 
 =head1 SYNOPSIS
 
