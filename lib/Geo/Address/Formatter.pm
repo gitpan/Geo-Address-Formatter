@@ -1,7 +1,7 @@
 # ABSTRACT: take structured address data and format it according to the various global/country rules
 
 package Geo::Address::Formatter;
-$Geo::Address::Formatter::VERSION = '1.2.6';
+$Geo::Address::Formatter::VERSION = '1.2.7';
 use strict;
 use warnings;
 
@@ -111,15 +111,19 @@ sub format_address {
 
     #print STDERR "t text " . Dumper $template_text;
     #print STDERR "comp " . Dumper $rh_components;
-
     # do we have the minimal components for an address?
     # or should we instead use the fallback template?
     if (!$self->_minimal_components($rh_components)){
-        $template_text = 
-            $rh_config->{fallback_template}
-            || $self->{templates}{default}{fallback_template}
-            || $rh_config->{address_template};  # if there is no fallback
+        if (defined($rh_config->{fallback_template})){
+            $template_text = $rh_config->{fallback_template};
+        }
+        elsif (defined($self->{templates}{default}{fallback_template})){
+            $template_text = $self->{templates}{default}{fallback_template};
+        }
+        # no fallback
     }
+
+    #print STDERR "t text " . Dumper $template_text;
 
     # clean up the components
     $self->_apply_replacements($rh_components, $rh_config->{replace});
@@ -140,10 +144,24 @@ sub format_address {
 }
 
 sub _postformat {
-    my $self        = shift;
-    my $text  = shift;
-    my $raa_rules   = shift;
+    my $self      = shift;
+    my $text      = shift;
+    my $raa_rules = shift;
+    my $text_orig = $text; # keep a copy
 
+    # remove duplicates
+    my @before_pieces = split(/,/, $text);
+    my %seen;
+    my @after_pieces;
+    foreach my $piece (@before_pieces){
+        $piece =~s/^\s+//g;
+        $seen{$piece}++;
+        next if ($seen{$piece} > 1);
+        push(@after_pieces,$piece);
+    }
+    $text = join(', ', @after_pieces);
+
+    # do any country specific rules
     foreach my $ra_fromto ( @$raa_rules ){
         try {
             my $regexp = qr/$ra_fromto->[0]/;
@@ -299,7 +317,7 @@ Geo::Address::Formatter - take structured address data and format it according t
 
 =head1 VERSION
 
-version 1.2.6
+version 1.2.7
 
 =head1 SYNOPSIS
 

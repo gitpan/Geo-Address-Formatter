@@ -37,11 +37,13 @@ generic5: &generic5 |
         {{#first}} {{state_district}} || {{state}} {{/first}}
         {{country}}
 
+# no postal code
 generic6: &generic6 |
         {{attention}}
         {{house}}
         {{house_number}} {{road}}
         {{#first}} {{city}} || {{town}} || {{village}} {{/first}} 
+        {{county}}
         {{country}}
 
 generic7: &generic7 |
@@ -56,6 +58,14 @@ generic8: &generic8 |
         {{house}}
         {{road}}, {{house_number}} 
         {{postcode}} {{#first}} {{city}} || {{town}} || {{village}} {{/first}} {{county}} 
+        {{country}}
+
+generic9: &generic9 |
+        {{attention}}
+        {{house}}
+        {{road}} {{house_number}}
+        {{suburb}} 
+        {{postcode}} {{#first}} {{city}} || {{town}} || {{village}} || {{state}} {{/first}}
         {{country}}
 
 
@@ -94,6 +104,12 @@ AD:
 AT: 
     address_template: *generic1
 
+# Argentina
+AR: 
+    address_template: *generic9
+    replace:
+        - ["^Autonomous City of ",""]
+
 # Australia
 AU: 
     address_template: *generic4
@@ -118,6 +134,10 @@ CA:
 
 # Switzerland
 CH: 
+    address_template: *generic1
+
+# Chile
+CL: 
     address_template: *generic1
 
 # Czech Republic
@@ -172,6 +192,14 @@ FR:
 
 GB:
     address_template: *generic2
+    fallback_template: |
+        {{attention}}
+        {{house}}
+        {{road}} {{house_number}}
+        {{suburb}}
+        {{#first}} {{city}} || {{town}} || {{village}} {{/first}}
+        {{county}}
+        {{country}}
     replace:
         - ["^Borough of ",""]
         - ["^County( of)? ",""]
@@ -182,6 +210,20 @@ GB:
     postformat_replace:
         - ["London, London","London"]
         - ["London, Greater London","London"]
+        - ["City of Westminster","London"]
+
+# Croatia
+HR: 
+    address_template: *generic1
+
+# Hungary
+HU:
+    address_template: |
+        {{attention}}
+        {{#first}} {{city}} || {{town}} || {{village}} {{/first}} 
+        {{road}} {{house_number}} 
+        {{postcode}}
+        {{country}}
 
 # Ireland
 IE: 
@@ -217,6 +259,10 @@ IS:
 IT: 
     address_template: *generic8
 
+# Liechtenstein, same as Switzerland
+LI: 
+    address_template: *generic1
+
 # Luxemburg
 LU:
     address_template: *generic3
@@ -245,6 +291,14 @@ NZ:
 PL:
     address_template: *generic1
 
+# Parguay
+PY: 
+    address_template: *generic1
+
+# Romania
+RO: 
+    address_template: *generic1
+
 # Russia
 RU:
     address_template: |
@@ -260,6 +314,10 @@ RU:
 # Singapore
 SG:
     address_template: *generic3
+
+# Slovenia
+SI: 
+    address_template: *generic1
 
 # Slovakia
 SK: 
@@ -284,6 +342,21 @@ US:
     address_template: *generic4
     fallback_template: *fallback2
 
+# Uruguay
+UY: 
+    address_template: *generic1
+
 # Vatican City - same as IT
 VA: 
     address_template: *generic8
+
+# South Africa
+ZA: 
+    address_template: |
+        {{attention}}
+        {{house}}
+        {{house_number}} {{road}}
+        {{suburb}} 
+        {{#first}} {{city}} || {{town}} || {{village}} || {{state}} {{/first}} 
+        {{postcode}}
+        {{country}}

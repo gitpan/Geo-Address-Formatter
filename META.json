@@ -38,7 +38,7 @@
    "provides" : {
       "Geo::Address::Formatter" : {
          "file" : "lib/Geo/Address/Formatter.pm",
-         "version" : "v1.2.6"
+         "version" : "v1.2.7"
       }
    },
    "release_status" : "stable",
@@ -49,6 +49,6 @@
          "web" : "https://github.com/lokku/perl-Geo-Address-Formatter"
       }
    },
-   "version" : "1.2.6"
+   "version" : "1.2.7"
 }
 
